@@ -44,3 +44,6 @@
 - blasted candies get removed
 - above candies are pushed down
 - new candies are pushed from the above
+
+# architecture. 
+- 

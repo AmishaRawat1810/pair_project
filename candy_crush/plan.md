@@ -8,18 +8,24 @@
 
 # defaults :
 
-- grid_size : 20, 20
-- swipper : the candy that user selects first to swipe
-- swipped : the candy that user selects second to swipe
+- grid_size : 10 , 10
+- candies : 🍬 , 🍭 , 🍩 , 🍪
+- swiped : the candy that user selects first to swipe
+- swiper : the candy that user selects second to swipe
 
 # Fill Candies
 
-- randomly choose a candy.
-- fill that candy into teminal grid.
+- randomly choose candies to fill the grid.
+
+
+# Display
+
+- fill that candies into teminal grid.
+
 
 # Swiping logic
 
-- get the swiped blocks [swipper, swipped].
+- get the swiped blocks [swiped, swiper].
 - validate swiped block:
   - only perpendicular neighbour blocks gets swiped.
 - swap candies if [Blast Possible].
@@ -41,6 +47,7 @@
 - blasting candy will give more score.
 
 # refilling the grid
+
 - blasted candies get removed
 - above candies are pushed down
 - new candies are pushed from the above

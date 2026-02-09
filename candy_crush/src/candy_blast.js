@@ -18,7 +18,7 @@ const findCandies = (target, axis, neighbours, screen) => {
   return candies;
 };
 
-const getNeighbourCandies = ({ x, y }, screen) => {
+const getMatchedCandies = ({ x, y }, screen) => {
   const target = screen[y][x];
   const xNeighbour = [x - 2, x - 1, x, x + 1, x + 2];
   const yNeighbour = [y - 2, y - 1, y, y + 1, y + 2];
@@ -31,8 +31,8 @@ const getNeighbourCandies = ({ x, y }, screen) => {
 };
 
 const blastCandy = (swiped, swiper, screen) => {
-  const swipedBlocks = getNeighbourCandies(swiped, screen);
-  const swiperBlocks = getNeighbourCandies(swiper, screen);
+  const swipedBlocks = getMatchedCandies(swiped, screen);
+  const swiperBlocks = getMatchedCandies(swiper, screen);
   return { swipedBlocks, swiperBlocks };
 };
 

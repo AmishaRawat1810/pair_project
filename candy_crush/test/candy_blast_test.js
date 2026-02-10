@@ -4,7 +4,10 @@ import { findCandies } from "../src/candy_blast.js";
 
 describe("Test for liberty candies of a candy", () => {
   let screen;
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   beforeEach(() => {
   });
 

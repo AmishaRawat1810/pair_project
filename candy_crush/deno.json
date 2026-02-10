@@ -1,15 +1,8 @@
 {
   "tasks": {
-<<<<<<< Updated upstream
-    "dev": "deno run --watch main.js", 
-    "test": "deno test -A", 
-    "test:coverage" : "deno test -A --coverage", 
-    "play" : "deno -A main.js"
-=======
     "dev": "deno run --watch main.js",
     "test": "deno test -A",
     "test:coverage": "deno test -A --coverage"
->>>>>>> Stashed changes
   },
   "imports": {
     "@std/assert": "jsr:@std/assert@^1.0.18",

@@ -1,8 +1,3 @@
-// # blasting logic
-// -> check for similar candies in 3 directions, except from direction it was
-//   swipped from.
-// -> For checking :take two from each direction, check for match.
-
 const findCandies = (target, axis, neighbours, screen) => {
   const candies = [];
 

@@ -78,16 +78,16 @@ describe("Candy Interaction Logic - Unit Tests", () => {
       const screen = [["#", "@", "@"], ["%", "%", "%"]];
 
       const result = swipeCandy({ swiped, swiper, screen });
-      assertEquals(Array.isArray(result), false);
+      assertEquals(result.length, 0);
     });
 
-    it("should return original objects if move is illegal (no liberty)", () => {
+    it("should return empty array if move is illegal (no liberty)", () => {
       const swiped = { x: 0, y: 0, value: "@" };
       const swiper = { x: 2, y: 0, value: "#" };
       const screen = [["@", "%", "#"]];
 
       const result = swipeCandy({ swiped, swiper, screen });
-      assertEquals(result, { swiped, swiper });
+      assertEquals(result, []);
     });
 
     it("should return original objects if move is legal but no match is formed", () => {
@@ -96,7 +96,7 @@ describe("Candy Interaction Logic - Unit Tests", () => {
       const screen = [["@", "#", "%"]];
 
       const result = swipeCandy({ swiped, swiper, screen });
-      assertEquals(result, { swiped, swiper });
+      assertEquals(result, []);
     });
   });
 });

@@ -11,35 +11,29 @@ export const validateLiberty = (swiped, swiper) => {
   return success;
 };
 
-export const updateCandies = (swiped, swiper) => {
+export const updateCandies = (swiped, swiper, screen) => {
   const temp = swiped.value;
   swiped.value = swiper.value;
+  screen[swiped.y][swiped.x] = swiper.value;
   swiper.value = temp;
+  screen[swiper.y][swiper.x] = temp;
 };
 
 export const validateBlast = (swiped, swiper, screen) => {
-  updateCandies(swiped, swiper);
-  const candiesToBlast = [];
-  let success = false;
+  updateCandies(swiped, swiper, screen);
 
-  const { swipedBlasts, swiperBlasts } = blastCandy({ swiped, swiper, screen });
+  const { swipedBlasts, swiperBlasts, allMatches } = blastCandy({
+    swiped,
+    swiper,
+    screen,
+  });
 
-  if (swipedBlasts.success) {
-    success = true;
-    candiesToBlast.push(swipedBlasts.candies);
+  if (swiperBlasts.success || swipedBlasts.success) {
+    return { success: true, candiesToBlast: allMatches };
   }
 
-  if (swiperBlasts.success) {
-    success = true;
-    candiesToBlast.push(swiperBlasts.candies);
-  }
-
-  if (!success) {
-    updateCandies(swiped, swiper);
-    return { success, "candiesToBlast": [] };
-  }
-
-  return { success, candiesToBlast };
+  updateCandies(swiped, swiper, screen);
+  return { success: false, candiesToBlast: [] };
 };
 
 export const swipeCandy = ({ swiped, swiper, screen }) => {
@@ -50,5 +44,5 @@ export const swipeCandy = ({ swiped, swiper, screen }) => {
     return isBlastPossible.candiesToBlast;
   }
 
-  return { swiped, swiper };
+  return [];
 };

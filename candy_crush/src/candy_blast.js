@@ -1,57 +1,73 @@
-export const findCandies = (targetCandy, axis, neighbours, screen) => {
-  const candies = [];
-  let nextIdx = neighbours[0];
+export const findCandies = (
+  targetCandy,
+  targetIdx,
+  validIndices,
+  candyLine,
+) => {
+  const matches = validIndices.map((idx) => candyLine[idx] === targetCandy);
+  const centerPos = validIndices.indexOf(targetIdx);
 
-  const validIndices = neighbours.filter((idx) =>
-    // screen axis is undefined then it will become false than break the code
-    idx >= 0 && idx < screen[axis]?.length
-  );
+  // If the center not present , no matches
+  if (centerPos === -1 || !matches[centerPos]) return [];
 
-  for (const idx of validIndices) {
-    const current = screen[axis][idx];
-    const isMatch = current === targetCandy;
+  let start = centerPos;
+  let end = centerPos;
 
-    //checks if it is a match and consecutive index
-    if (isMatch && idx === nextIdx) {
-      nextIdx = idx + 1;
-      candies.push();
-    }
-    //checks if it isn't a match and candies trio is not found
-    if (!isMatch && candies.length < 3) {
-      nextIdx = idx - 1;
-      candies.length = 0;
-    }
-  }
+  // iterate center to left/bottom one by one
+  while (start > 0 && matches[start - 1]) start--;
+  // iterate center to right/top one by one
+  while (end < matches.length - 1 && matches[end + 1]) end++;
 
-  return candies;
+  const result = end - start + 1 >= 3 ? validIndices.slice(start, end + 1) : [];
+  return result;
 };
 
-const getMatchedCandies = (candy, screen) => {
+export const getCandyLine = (center, step, candyLine) => {
+  const sequence = Array.from(
+    { length: step * 2 + 1 },
+    (_, i) => center - step + i,
+  );
+  return sequence.filter((idx) => idx >= 0 && idx < candyLine.length);
+};
+
+export const getMatchedCandies = (candy, screen) => {
   const [x, y] = [candy.x, candy.y];
   const targetCandy = screen[y][x];
-  const xNeighbour = [x - 2, x - 1, x, x + 1, x + 2];
-  const yNeighbour = [y - 2, y - 1, y, y + 1, y + 2];
+  const step = 2;
+  const axis = [
+    { targetIdx: x, line: screen[y], isHorizontal: true },
+    { targetIdx: y, line: screen.map((row) => row[x]), isHorizontal: false },
+  ];
 
-  const xCandies = findCandies(targetCandy, y, xNeighbour, screen);
-  const yCandies = findCandies(targetCandy, x, yNeighbour, screen);
-  const candies = [...xCandies, ...yCandies];
+  const combined = axis.flatMap(({ targetIdx, line, isHorizontal }) => {
+    const validIndices = getCandyLine(targetIdx, step, line);
+    const matches = findCandies(targetCandy, targetIdx, validIndices, line);
+    return matches.map((idx) => isHorizontal ? [y, idx] : [idx, x]);
+  });
+
+  const candies = combined.filter((candy, coord) =>
+    coord === combined.findIndex((c) => c[0] === candy[0] && c[1] === candy[1])
+  );
 
   return candies;
 };
 
 export const blastCandy = ({ swiped, swiper, screen }) => {
-  const swipedMatches = getMatchedCandies(swiped, screen);
-  const swiperMatches = getMatchedCandies(swiper, screen);
+  const [swipedMatches, swiperMatches] = [swiped, swiper].map((c) =>
+    getMatchedCandies(c, screen)
+  );
 
-  const swipedBlasts = {
-    success: swipedMatches.length > 0,
-    candies: swipedMatches,
+  const result = {
+    swipedBlasts: {
+      success: swipedMatches.length > 0,
+      candies: swipedMatches,
+    },
+    swiperBlasts: {
+      success: swiperMatches.length > 0,
+      candies: swiperMatches,
+    },
+    allMatches: [...swipedMatches, ...swiperMatches],
   };
 
-  const swiperBlasts = {
-    success: swiperMatches.length > 0,
-    candies: swiperMatches,
-  };
-
-  return { swipedBlasts, swiperBlasts };
+  return result;
 };

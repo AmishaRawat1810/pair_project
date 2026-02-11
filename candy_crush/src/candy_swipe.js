@@ -1,6 +1,6 @@
 import { blastCandy } from "./candy_blast.js";
 
-const validateLiberty = (swiped, swiper) => {
+export const validateLiberty = (swiped, swiper) => {
   const dx = Math.abs(swiper.x - swiped.x);
   const dy = Math.abs(swiper.y - swiped.y);
 
@@ -11,13 +11,13 @@ const validateLiberty = (swiped, swiper) => {
   return success;
 };
 
-const updateCandies = (swiped, swiper) => {
+export const updateCandies = (swiped, swiper) => {
   const temp = swiped.value;
   swiped.value = swiper.value;
   swiper.value = temp;
 };
 
-const validateBlast = (swiped, swiper, screen) => {
+export const validateBlast = (swiped, swiper, screen) => {
   updateCandies(swiped, swiper);
   const candiesToBlast = [];
   let success = false;
@@ -42,7 +42,7 @@ const validateBlast = (swiped, swiper, screen) => {
   return { success, candiesToBlast };
 };
 
-const swipeCandy = ({ swiped, swiper, screen }) => {
+export const swipeCandy = ({ swiped, swiper, screen }) => {
   const isLiberty = validateLiberty(swiped, swiper);
   const isBlastPossible = validateBlast(swiped, swiper, screen);
 
@@ -52,9 +52,3 @@ const swipeCandy = ({ swiped, swiper, screen }) => {
 
   return { swiped, swiper };
 };
-
-const swiped = { x: 3, y: 0, value: "@" };
-const swiper = { x: 4, y: 0, value: "#" };
-console.log(
-  swipeCandy({ swiped, swiper, screen: ["#", "@", "@", "#", "@", "#", "@"] }),
-);

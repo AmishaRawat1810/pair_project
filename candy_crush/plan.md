@@ -17,7 +17,6 @@
 
 - randomly choose candies to fill the grid.
 
-
 # Display
 
 - fill that candies into teminal grid.

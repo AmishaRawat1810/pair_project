@@ -2,8 +2,8 @@ import { assertEquals } from "@std/assert";
 import { beforeEach, describe, it } from "@std/testing/bdd";
 import {
   blastCandy,
-  findCandies,
-  getCandyLine,
+  collectContiguousMatches,
+  getCandyScanRange,
   getMatchedCandies,
 } from "../src/candy_blast.js";
 
@@ -25,7 +25,7 @@ describe("Candy Blast Logic Tests", () => {
       const validIndices = [0, 1, 2, 3, 4];
       const candyLine = screen[0]; // ["#", "@", "@", "@", "%"]
 
-      const result = findCandies(
+      const result = collectContiguousMatches(
         targetCandy,
         targetIdx,
         validIndices,
@@ -40,7 +40,7 @@ describe("Candy Blast Logic Tests", () => {
       const validIndices = [0, 1, 2];
       const candyLine = ["#", "#", "@"];
 
-      const result = findCandies(
+      const result = collectContiguousMatches(
         targetCandy,
         targetIdx,
         validIndices,
@@ -53,13 +53,13 @@ describe("Candy Blast Logic Tests", () => {
   describe("getCandyLine()", () => {
     it("should generate valid indices within bounds", () => {
       const line = ["A", "B", "C", "D", "E"];
-      const result = getCandyLine(2, 2, line);
+      const result = getCandyScanRange(2, 2, line);
       assertEquals(result, [0, 1, 2, 3, 4]);
     });
 
     it("should clamp indices at the start of the array", () => {
       const line = ["A", "B", "C"];
-      const result = getCandyLine(0, 2, line);
+      const result = getCandyScanRange(0, 2, line);
       assertEquals(result, [0, 1, 2]);
     });
   });

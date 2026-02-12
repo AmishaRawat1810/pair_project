@@ -9,7 +9,7 @@ export const createScreen = ({ height, width, char = " " }) => {
 export const renderScreen = (screen) =>
   screen.map((row) => row.join("|")).join("\n");
 
-export const drawOnScreen = ({screenConfig}) => {
-  const renderedScreen = renderScreen(screenConfig.screen); 
-  console.log(renderedScreen); 
-}
+export const drawOnScreen = ({ screenConfig }) => {
+  const renderedScreen = renderScreen(screenConfig.screen);
+  console.log(renderedScreen);
+};

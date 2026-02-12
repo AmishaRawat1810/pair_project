@@ -1,7 +1,7 @@
-import { play } from "./src/candy_crush.js"
+import { play } from "./src/candy_crush.js";
 
 export const main = () => {
-  play(); 
-}
+  play();
+};
 
-main(); 
+main();

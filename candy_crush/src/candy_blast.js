@@ -1,4 +1,4 @@
-export const findCandies = (
+export const collectContiguousMatches = (
   targetCandy,
   targetIdx,
   validIndices,
@@ -15,6 +15,7 @@ export const findCandies = (
 
   // iterate center to left/bottom one by one
   while (start > 0 && matches[start - 1]) start--;
+
   // iterate center to right/top one by one
   while (end < matches.length - 1 && matches[end + 1]) end++;
 
@@ -22,11 +23,12 @@ export const findCandies = (
   return result;
 };
 
-export const getCandyLine = (center, step, candyLine) => {
+export const getCandyScanRange = (center, step, candyLine) => {
   const sequence = Array.from(
     { length: step * 2 + 1 },
     (_, i) => center - step + i,
   );
+
   return sequence.filter((idx) => idx >= 0 && idx < candyLine.length);
 };
 
@@ -40,8 +42,13 @@ export const getMatchedCandies = (candy, screen) => {
   ];
 
   const combined = axis.flatMap(({ targetIdx, line, isHorizontal }) => {
-    const validIndices = getCandyLine(targetIdx, step, line);
-    const matches = findCandies(targetCandy, targetIdx, validIndices, line);
+    const validIndices = getCandyScanRange(targetIdx, step, line);
+    const matches = collectContiguousMatches(
+      targetCandy,
+      targetIdx,
+      validIndices,
+      line,
+    );
     return matches.map((idx) => isHorizontal ? [y, idx] : [idx, x]);
   });
 
@@ -50,6 +57,12 @@ export const getMatchedCandies = (candy, screen) => {
   );
 
   return candies;
+};
+
+const removeBlastedCandies = (candiesToBlast, screen) => {
+  candiesToBlast.forEach(([y, x]) => {
+    screen[y][x] = "  ";
+  });
 };
 
 export const blastCandy = ({ swiped, swiper, screen }) => {
@@ -68,6 +81,10 @@ export const blastCandy = ({ swiped, swiper, screen }) => {
     },
     allMatches: [...swipedMatches, ...swiperMatches],
   };
+
+  if (result.allMatches.length > 0) {
+    removeBlastedCandies(result.allMatches, screen);
+  }
 
   return result;
 };

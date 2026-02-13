@@ -1,102 +1,87 @@
 import { assertEquals } from "@std/assert";
 import { describe, it } from "@std/testing/bdd";
 import {
+  swapCandies,
   swipeCandy,
-  updateCandies,
-  validateBlast,
   validateLiberty,
 } from "../src/candy_swipe.js";
 
-describe("Candy Interaction Logic - Unit Tests", () => {
+describe("Candy Interaction Logic", () => {
   describe("validateLiberty()", () => {
     it("should return true for horizontal adjacency", () => {
-      const swiped = { x: 1, y: 1 };
-      const swiper = { x: 2, y: 1 };
-      assertEquals(validateLiberty(swiped, swiper), true);
+      assertEquals(validateLiberty({ x: 1, y: 1 }, { x: 2, y: 1 }), true);
     });
 
     it("should return true for vertical adjacency", () => {
-      const swiped = { x: 1, y: 1 };
-      const swiper = { x: 1, y: 2 };
-      assertEquals(validateLiberty(swiped, swiper), true);
+      assertEquals(validateLiberty({ x: 1, y: 1 }, { x: 1, y: 2 }), true);
     });
 
-    it("should return false for diagonal positions", () => {
-      const swiped = { x: 1, y: 1 };
-      const swiper = { x: 2, y: 2 };
-      assertEquals(validateLiberty(swiped, swiper), false);
-    });
-
-    it("should return false for same position", () => {
-      const swiped = { x: 1, y: 1 };
-      const swiper = { x: 1, y: 1 };
-      assertEquals(validateLiberty(swiped, swiper), false);
+    it("should return false for non-adjacent positions", () => {
+      assertEquals(validateLiberty({ x: 0, y: 0 }, { x: 2, y: 0 }), false);
+      assertEquals(validateLiberty({ x: 0, y: 0 }, { x: 1, y: 1 }), false);
     });
   });
 
-  describe("updateCandies()", () => {
-    it("should swap values between two candy objects", () => {
-      const screen = [["%", "@", "@"], ["#", "%", "%"]];
-      const swiped = { x: 1, y: 0, value: "@" };
-      const swiper = { x: 0, y: 1, value: "#" };
-      updateCandies(swiped, swiper, screen);
-      assertEquals(swiped.value, "#");
-      assertEquals(swiper.value, "@");
-    });
-  });
+  describe("swapCandies()", () => {
+    it("should swap values in objects and the grid", () => {
+      const screen = [["A", "B"]];
+      const swiped = { x: 0, y: 0, value: "A" };
+      const swiper = { x: 1, y: 0, value: "B" };
 
-  describe("validateBlast()", () => {
-    it("should return success false and empty array if no blast is formed", () => {
-      const swiped = { x: 0, y: 0, value: "@" };
-      const swiper = { x: 0, y: 1, value: "#" };
-      const screen = [["@", "#", "%"], ["%", "%", "&"]];
+      swapCandies(swiped, swiper, screen);
 
-      const result = validateBlast(swiped, swiper, screen);
-
-      assertEquals(result.success, false);
-      assertEquals(result.candiesToBlast, []);
-      assertEquals(swiped.value, "@");
-    });
-
-    it("should return success true and candies if a blast is formed", () => {
-      const swiped = { x: 0, y: 0, value: "%" };
-      const swiper = { x: 0, y: 1, value: "#" };
-      const screen = [["%", "@", "@"], ["#", "%", "%"]];
-
-      const result = validateBlast(swiped, swiper, screen);
-
-      assertEquals(result.success, true);
-      assertEquals(Array.isArray(result.candiesToBlast), true);
-      assertEquals(swiped.value, "#");
+      assertEquals(swiped.value, "B");
+      assertEquals(swiper.value, "A");
+      assertEquals(screen[0][0], "B");
+      assertEquals(screen[0][1], "A");
     });
   });
 
   describe("swipeCandy()", () => {
-    it("should return empty array if move is legal but no match", () => {
-      const swiped = { x: 0, y: 0, value: "#" };
-      const swiper = { x: 1, y: 0, value: "@" };
-      const screen = [["#", "@", "@"], ["%", "%", "%"]];
+    it("should return success true and empty the board at match locations", () => {
+      const screen = [
+        ["X", "A", "A"],
+        ["A", "Y", "Y"],
+        ["Z", "Z", "Z"],
+      ];
+      const swiped = { x: 0, y: 0, value: "X" };
+      const swiper = { x: 0, y: 1, value: "A" };
 
       const result = swipeCandy({ swiped, swiper, screen });
-      assertEquals(result.length, 0);
+
+      assertEquals(result.success, true);
+      assertEquals(result.candiesToBlast.length >= 3, true);
+      assertEquals(screen[0][0], "  ");
+      assertEquals(screen[0][1], "  ");
+      assertEquals(screen[0][2], "  ");
     });
 
-    it("should return empty array if move is illegal (no liberty)", () => {
-      const swiped = { x: 0, y: 0, value: "@" };
-      const swiper = { x: 2, y: 0, value: "#" };
-      const screen = [["@", "%", "#"]];
+    it("should return success false and revert board if no match is formed", () => {
+      const screen = [
+        ["A", "B", "C"],
+        ["D", "E", "F"],
+      ];
+      const swiped = { x: 0, y: 0, value: "A" };
+      const swiper = { x: 1, y: 0, value: "B" };
 
       const result = swipeCandy({ swiped, swiper, screen });
-      assertEquals(result, []);
+
+      assertEquals(result.success, false);
+      assertEquals(result.candiesToBlast, []);
+      assertEquals(screen[0][0], "A");
+      assertEquals(screen[0][1], "B");
     });
 
-    it("should return original objects if move is legal but no match is formed", () => {
-      const swiped = { x: 0, y: 0, value: "@" };
-      const swiper = { x: 1, y: 0, value: "#" };
-      const screen = [["@", "#", "%"]];
+    it("should return success false immediately if not a liberty", () => {
+      const screen = [["A", "X", "B"]];
+      const swiped = { x: 0, y: 0, value: "A" };
+      const swiper = { x: 2, y: 0, value: "B" };
 
       const result = swipeCandy({ swiped, swiper, screen });
-      assertEquals(result, []);
+
+      assertEquals(result.success, false);
+      assertEquals(screen[0][0], "A");
+      assertEquals(screen[0][2], "B");
     });
   });
 });

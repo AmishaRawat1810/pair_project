@@ -1,4 +1,4 @@
-export const fillAfterBlast = ({ screenConfig }, candiesToBlast) => {
+export const gravityPull = ({ screenConfig }, candiesToBlast) => {
   const { screen } = screenConfig;
 
   if (!candiesToBlast || candiesToBlast.length === 0) return;

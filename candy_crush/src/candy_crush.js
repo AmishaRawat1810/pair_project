@@ -1,5 +1,5 @@
 import { swipeCandy } from "./candy_swipe.js";
-import { fillAfterBlast } from "./fill_after_blast.js";
+import { gravityPull } from "./gravity.js";
 import { fillCandies } from "./fill_candies.js";
 import { createScreen, drawOnScreen } from "./grid.js";
 import { parseInput } from "./parse_Input.js";
@@ -17,7 +17,7 @@ export const play = () => {
     const swiper = parseInput(candy2, screenConfig.screen);
 
     const result = swipeCandy({ swiped, swiper, screen: screenConfig.screen });
-    fillAfterBlast({ screenConfig }, result.candiesToBlast);
+    gravityPull({ screenConfig }, result.candiesToBlast);
     drawOnScreen({ screenConfig });
   }
 };

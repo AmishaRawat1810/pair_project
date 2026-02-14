@@ -77,38 +77,31 @@ So, for findAllMatches in the board I plan to :
  -> if there is no candies then move to next.
  If there is candy -> removeBlastedCandies -> gravity -> continue with findAllMatches
 */
+const addCandies = (screen, x, y, matches, isHorizontal, width, height) => {
+  const [dx, dy] = isHorizontal ? [1, 0] : [0, 1];
+  const withinRange = isHorizontal ? x + 2 < width : y + 2 < height;
+
+  if (!withinRange) return;
+
+  const candy1 = screen[y][x];
+  const candy2 = screen[y + dy][x + dx];
+  const candy3 = screen[y + dy * 2][x + dx * 2];
+
+  if (candy1 !== "  " && candy1 === candy2 && candy2 === candy3) {
+    matches.add(`${x},${y}`);
+    matches.add(`${x + dx},${y + dy}`);
+    matches.add(`${x + dx * 2},${y + dy * 2}`);
+  }
+};
 
 const findAllMatches = (screenConfig) => {
   const { screen, width, height } = screenConfig;
   const matches = new Set();
 
-  //for horizontal
   for (let y = 0; y < height; y++) {
-    for (let x = 0; x < width - 3; x++) {
-      const candy1 = screen[y][x];
-      const candy2 = screen[y][x + 1];
-      const candy3 = screen[y][x + 2];
-
-      if (candy1 !== "  " && candy1 === candy2 && candy2 === candy3) {
-        matches.add(`${x},${y}`);
-        matches.add(`${x + 1},${y}`);
-        matches.add(`${x + 2},${y}`);
-      }
-    }
-  }
-
-  //for vertical
-  for (let x = 0; x < width; x++) {
-    for (let y = 0; y < height - 3; y++) {
-      const candy1 = screen[y][x];
-      const candy2 = screen[y + 1][x];
-      const candy3 = screen[y + 2][x];
-
-      if (candy1 !== "  " && candy1 === candy2 && candy2 === candy3) {
-        matches.add(`${x},${y}`);
-        matches.add(`${x},${y + 1}`);
-        matches.add(`${x},${y + 2}`);
-      }
+    for (let x = 0; x < width; x++) {
+      addCandies(screen, x, y, matches, true, width, height); //for horizontal
+      addCandies(screen, x, y, matches, false, width, height); ////for vertical
     }
   }
 

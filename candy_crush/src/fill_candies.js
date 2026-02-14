@@ -8,9 +8,9 @@ import { CANDIES } from "./global_var.js";
 
 export const weightedPick = (
   randomFn = (sum) => Math.random() * sum,
-  candies = CANDIES, 
+  candies = CANDIES,
 ) => {
-  const candyKeys= Object.keys(candies); 
+  const candyKeys = Object.keys(candies);
   const sum = candyKeys.reduce((acc, candy) => acc + candies[candy].weight, 0);
   const randomNum = randomFn(sum);
   let currSum = 0;
@@ -42,47 +42,43 @@ export const filterPairs = (
   }
 };
 
-export const calculateWeights = (screen, {x, y}, candies = CANDIES) => {
+export const calculateWeights = (screen, { x, y }, candies = CANDIES) => {
   if (screen[y][x - 1] !== undefined) {
     if (screen[y][x - 1] === screen[y][x - 2]) {
-      const candyKey = screen[y][x- 1]; 
-      console.log({screen}); 
-      candies[candyKey].weight = 0; 
+      const candyKey = screen[y][x - 1];
+      candies[candyKey].weight = 0;
     }
-  }; 
+  }
 
-
-  if (y >= 2){
+  if (y >= 2) {
     if (screen[y - 1][x] === screen[y - 2][x]) {
-      const candyKey = screen[y - 1][x]; 
-      console.log({screen}); 
-      candies[candyKey].weight = 0; 
+      const candyKey = screen[y - 1][x];
+      candies[candyKey].weight = 0;
     }
-  }  
-
-} 
+  }
+};
 
 const resetWeights = (candies) => {
   for (const key in candies) {
-    candies[key].weight = 1; 
+    candies[key].weight = 1;
   }
-}
+};
 
 export const fillCandies = (
   {
     screenConfig,
-    candies = CANDIES, 
+    candies = CANDIES,
     randomFn = (sum) => Math.random() * sum,
   },
 ) => {
   for (let y = 0; y < screenConfig.height; y++) {
     for (let x = 0; x < screenConfig.width; x++) {
-      calculateWeights(screenConfig.screen, {x, y});
+      calculateWeights(screenConfig.screen, { x, y });
       const randomCandy = weightedPick(randomFn, candies);
       screenConfig.screen[y][x] = randomCandy;
-      resetWeights(candies); 
+      resetWeights(candies);
     }
   }
-  console.log(screenConfig); 
+  console.log(screenConfig);
   // filterPairs(screenConfig, candies);
 };

@@ -1,4 +1,4 @@
-import { weightedPick } from "./fill_candies.js";
+import { calculateWeights, weightedPick } from "./fill_candies.js";
 
 export const gravityPull = ({ screenConfig }, candiesToBlast) => {
   const { screen } = screenConfig;
@@ -21,6 +21,7 @@ export const gravityPull = ({ screenConfig }, candiesToBlast) => {
         }
       }
       if (screen[y][x] === "  ") {
+        calculateWeights(screenConfig.screen, { x, y });
         screen[y][x] = weightedPick();
       }
     }

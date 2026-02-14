@@ -1,10 +1,10 @@
-export const collectContiguousMatches = (
-  targetCandy,
+export const collectMatches = (
+  target,
   targetIdx,
   validIndices,
   candyLine,
 ) => {
-  const matches = validIndices.map((idx) => candyLine[idx] === targetCandy);
+  const matches = validIndices.map((idx) => candyLine[idx] === target);
   const centerPos = validIndices.indexOf(targetIdx);
 
   // If the center not present , no matches
@@ -34,7 +34,7 @@ export const getCandyScanRange = (center, step, candyLine) => {
 
 export const getMatchedCandies = (candy, screen) => {
   const [x, y] = [candy.x, candy.y];
-  const targetCandy = screen[y][x];
+  const target = screen[y][x];
   const step = 2;
   const axis = [
     { targetIdx: x, line: screen[y], isHorizontal: true },
@@ -42,13 +42,8 @@ export const getMatchedCandies = (candy, screen) => {
   ];
 
   const combined = axis.flatMap(({ targetIdx, line, isHorizontal }) => {
-    const validIndices = getCandyScanRange(targetIdx, step, line);
-    const matches = collectContiguousMatches(
-      targetCandy,
-      targetIdx,
-      validIndices,
-      line,
-    );
+    const scanRange = getCandyScanRange(targetIdx, step, line);
+    const matches = collectMatches(target, targetIdx, scanRange, line);
     return matches.map((idx) => isHorizontal ? [y, idx] : [idx, x]);
   });
 

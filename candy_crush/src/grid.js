@@ -7,9 +7,11 @@ export const createScreen = ({ height, width, char = " " }) => {
   return { height, width, screen };
 };
 
-export const renderScreen = (screen) =>{
-    return screen.map((row, i) => `${row.map(ele => CANDIES[ele].candy).join("|")} |${i}`).join("\n");
-}
+export const renderScreen = (screen) => {
+  return screen.map((row, i) =>
+    `${row.map((ele) => CANDIES[ele].candy).join("|")} |${i}`
+  ).join("\n");
+};
 
 export const createTop = (width = 9) => {
   const top = [];
@@ -20,7 +22,7 @@ export const createTop = (width = 9) => {
 };
 
 export const drawOnScreen = ({ screenConfig }) => {
-  // console.clear();
+  console.clear();
   const top = createTop();
   const renderedScreen = renderScreen(screenConfig.screen);
   console.log(top + "\n" + renderedScreen);

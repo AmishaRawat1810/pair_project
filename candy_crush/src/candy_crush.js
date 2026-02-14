@@ -15,7 +15,6 @@ export const play = () => {
     const candy2 = prompt("Enter candy 2 coor : ");
     const swiped = parseInput(candy1, screenConfig.screen);
     const swiper = parseInput(candy2, screenConfig.screen);
-
     const result = swipeCandy({ swiped, swiper, screen: screenConfig.screen });
     gravityPull({ screenConfig }, result.candiesToBlast);
     drawOnScreen({ screenConfig });

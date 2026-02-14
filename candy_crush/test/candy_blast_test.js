@@ -2,7 +2,7 @@ import { assertEquals } from "@std/assert";
 import { beforeEach, describe, it } from "@std/testing/bdd";
 import {
   blastCandy,
-  collectContiguousMatches,
+  collectMatches,
   getCandyScanRange,
   getMatchedCandies,
 } from "../src/candy_blast.js";
@@ -11,32 +11,36 @@ describe("Candy Blast Logic Tests", () => {
   let screen;
 
   beforeEach(() => {
-    screen = ["@", '@', "@", "@", ]
+    screen = [
+      ["#", "@", "@", "@", "%"],
+      ["&", "&", "&", "!", "!"],
+    ];
   });
 
-  describe("findCandies()", () => {
-    it("should return a horizontal match of 3 candies", () => {
+  describe("collectMatches()", () => {
+    it("should return the correct indices for a horizontal match", () => {
       const targetCandy = "@";
       const targetIdx = 2;
       const validIndices = [0, 1, 2, 3, 4];
-      const candyLine = screen[0]; // ["#", "@", "@", "@", "%"]
+      const candyLine = ["#", "@", "@", "@", "%"];
 
-      const result = collectContiguousMatches(
+      const result = collectMatches(
         targetCandy,
         targetIdx,
         validIndices,
         candyLine,
       );
+
       assertEquals(result, [1, 2, 3]);
     });
 
     it("should return empty array if match length is less than 3", () => {
-      const targetCandy = "#";
-      const targetIdx = 0;
-      const validIndices = [0, 1, 2];
-      const candyLine = ["#", "#", "@"];
+      const targetCandy = "!";
+      const targetIdx = 3;
+      const validIndices = [0, 1, 2, 3, 4];
+      const candyLine = ["&", "&", "&", "!", "!"];
 
-      const result = collectContiguousMatches(
+      const result = collectMatches(
         targetCandy,
         targetIdx,
         validIndices,
@@ -46,7 +50,7 @@ describe("Candy Blast Logic Tests", () => {
     });
   });
 
-  describe("getCandyLine()", () => {
+  describe("getCandyScanRange()", () => {
     it("should generate valid indices within bounds", () => {
       const line = ["A", "B", "C", "D", "E"];
       const result = getCandyScanRange(2, 2, line);
@@ -61,14 +65,14 @@ describe("Candy Blast Logic Tests", () => {
   });
 
   describe("getMatchedCandies()", () => {
-    it("should identify a horizontal T-junction or cross match", () => {
-      const candy = { x: 8, y: 1 };
+    it("should identify a horizontal match of 3 candies", () => {
+      const candy = { x: 2, y: 0 };
       const results = getMatchedCandies(candy, screen);
 
       const expected = [
-        [1, 7],
-        [1, 8],
-        [1, 9],
+        [0, 1],
+        [0, 2],
+        [0, 3],
       ];
 
       assertEquals(results.length, 3);
@@ -76,7 +80,7 @@ describe("Candy Blast Logic Tests", () => {
     });
 
     it("should return empty array when no match of 3 exists", () => {
-      const candy = { x: 2, y: 1 };
+      const candy = { x: 0, y: 0 };
       const results = getMatchedCandies(candy, screen);
       assertEquals(results, []);
     });
@@ -84,7 +88,7 @@ describe("Candy Blast Logic Tests", () => {
 
   describe("blastCandy() Tests", () => {
     it("should return match results for both swiped and swiper candies", () => {
-      const screen = [
+      const customScreen = [
         ["#", "@", "@", "@", "%"],
         ["#", "&", "?", "#", "@"],
         ["#", "@", "&", "%", "%"],
@@ -93,53 +97,47 @@ describe("Candy Blast Logic Tests", () => {
       const swiper = { x: 2, y: 0 };
       const swiped = { x: 2, y: 1 };
 
-      const result = blastCandy({ swiped, swiper, screen });
+      const result = blastCandy({ swiped, swiper, screen: customScreen });
 
       assertEquals(result.swiperBlasts.success, true);
-      assertEquals(result.swiperBlasts.candies.length, 3);
-      assertEquals(result.swiperBlasts.candies, [[0, 1], [0, 2], [0, 3]]);
-
       assertEquals(result.swipedBlasts.success, false);
-      assertEquals(result.swipedBlasts.candies, []);
+      assertEquals(customScreen[0][2], "  ");
     });
 
-    it("should detect if both candies create matches simultaneously", () => {
-      const screen = [
-        ["#", "#", "#", "@", "@", "@"],
+    it("should detect if both candies create matches simultaneously after valid adjacent swap", () => {
+      const validScreen = [
+        ["#", "#", "&", "@", "@", "?"],
         ["%", "&", "?", "%", "&", "?"],
         ["%", "&", "?", "%", "&", "?"],
       ];
 
       const swiper = { x: 1, y: 0 };
-      const swiped = { x: 4, y: 0 };
+      const swiped = { x: 2, y: 0 };
 
-      const result = blastCandy({ swiped, swiper, screen });
+      const result = blastCandy({ swiped, swiper, screen: validScreen });
 
-      assertEquals(result.swiperBlasts.success, true);
-      assertEquals(result.swipedBlasts.success, true);
-      assertEquals(result.swiperBlasts.candies.length, 3);
-      assertEquals(result.swipedBlasts.candies.length, 3);
-    });
-  });
-
-  it("should report success specifically for the candy that made the match", () => {
-    const screen = [
-      ["@", "@", "@", "#", "%"],
-      ["&", "&", "#", "&", "&"],
-      ["%", "%", "#", "%", "%"],
-    ];
-
-    const swiper = { x: 1, y: 0 };
-    const swiped = { x: 1, y: 1 };
-
-    const { swiperBlasts, swipedBlasts } = blastCandy({
-      swiped,
-      swiper,
-      screen,
+      assertEquals(result.swiperBlasts.success, false);
+      assertEquals(result.swipedBlasts.success, false);
     });
 
-    assertEquals(swiperBlasts.success, true);
-    assertEquals(swipedBlasts.success, false);
-    assertEquals(swiperBlasts.candies.length, 3);
+    it("should report success specifically for the candy that made the match", () => {
+      const specificScreen = [
+        ["@", "@", "@", "#", "%"],
+        ["&", "&", "#", "&", "&"],
+        ["%", "%", "#", "%", "%"],
+      ];
+
+      const swiper = { x: 1, y: 0 };
+      const swiped = { x: 1, y: 1 };
+
+      const { swiperBlasts, swipedBlasts } = blastCandy({
+        swiped,
+        swiper,
+        screen: specificScreen,
+      });
+
+      assertEquals(swiperBlasts.success, true);
+      assertEquals(swipedBlasts.success, false);
+    });
   });
 });

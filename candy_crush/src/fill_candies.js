@@ -27,15 +27,18 @@ export const filterPairs = (
   { screen, height, width },
   candies = CANDIES,
 ) => {
+  const candyTypes = Object.keys(candies);
   for (let r = 1; r < height - 1; r++) {
     for (let c = 1; c < width - 1; c++) {
       const target = screen[r][c];
+
       if (target === screen[r - 1][c] && target === screen[r + 1][c]) {
-        const remainingCandies = candies.filter((candy) => candy !== target);
+        const remainingCandies = candyTypes.filter((candy) => candy !== target);
         screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
       }
+
       if (screen[r][c - 1] === target && target === screen[r][c + 1]) {
-        const remainingCandies = candies.filter((candy) => candy !== target);
+        const remainingCandies = candyTypes.filter((candy) => candy !== target);
         screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
       }
     }
@@ -58,7 +61,7 @@ export const calculateWeights = (screen, { x, y }, candies = CANDIES) => {
   }
 };
 
-const resetWeights = (candies) => {
+export const resetWeights = (candies = CANDIES) => {
   for (const key in candies) {
     candies[key].weight = 1;
   }
@@ -79,6 +82,6 @@ export const fillCandies = (
       resetWeights(candies);
     }
   }
-  console.log(screenConfig);
+  // console.log(screenConfig);
   // filterPairs(screenConfig, candies);
 };

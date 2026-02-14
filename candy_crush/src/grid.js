@@ -22,7 +22,7 @@ export const createTop = (width = 9) => {
 };
 
 export const drawOnScreen = ({ screenConfig }) => {
-  console.clear();
+  // console.clear();
   const top = createTop();
   const renderedScreen = renderScreen(screenConfig.screen);
   console.log(top + "\n" + renderedScreen);

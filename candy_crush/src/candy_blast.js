@@ -54,7 +54,7 @@ export const getMatchedCandies = (candy, screen) => {
   return candies;
 };
 
-const removeBlastedCandies = (candiesToBlast, screen) => {
+export const removeBlastedCandies = (candiesToBlast, screen) => {
   candiesToBlast.forEach(([y, x]) => {
     screen[y][x] = "  ";
   });

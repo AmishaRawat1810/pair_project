@@ -1,7 +1,8 @@
-// contract, take screen , and candies and fill the grid with the candies.
-
 import { CANDIES } from "./global_var.js";
+import { removeBlastedCandies } from "./candy_blast.js";
+import { gravityPull } from "./gravity.js";
 
+// contract, take screen , and candies and fill the grid with the candies.
 // const randomNoBetween = (start = 0, end = 1) => {
 //   return start + Math.floor(Math.random() * (end - start));
 // };
@@ -23,37 +24,40 @@ export const weightedPick = (
   }
 };
 
-export const filterPairs = (
-  { screen, height, width },
-  candies = CANDIES,
-) => {
-  const candyTypes = Object.keys(candies);
-  for (let r = 1; r < height - 1; r++) {
-    for (let c = 1; c < width - 1; c++) {
-      const target = screen[r][c];
+// export const filterPairs = (
+//   { screen, height, width },
+//   candies = CANDIES,
+// ) => {
+//   const candyTypes = Object.keys(candies);
 
-      if (target === screen[r - 1][c] && target === screen[r + 1][c]) {
-        const remainingCandies = candyTypes.filter((candy) => candy !== target);
-        screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
-      }
+//   for (let r = 1; r < height - 1; r++) {
+//     for (let c = 1; c < width - 1; c++) {
+//       const target = screen[r][c];
 
-      if (screen[r][c - 1] === target && target === screen[r][c + 1]) {
-        const remainingCandies = candyTypes.filter((candy) => candy !== target);
-        screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
-      }
-    }
-  }
-};
+//       if (target === screen[r - 1][c] && target === screen[r + 1][c]) {
+//         const remainingCandies = candyTypes.filter((candy) => candy !== target);
+//         screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
+//       }
+
+//       if (screen[r][c - 1] === target && target === screen[r][c + 1]) {
+//         const remainingCandies = candyTypes.filter((candy) => candy !== target);
+//         screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
+//       }
+//     }
+//   }
+// };
 
 export const calculateWeights = (screen, { x, y }, candies = CANDIES) => {
-  if (screen[y][x - 1] !== undefined) {
+  // vertical check
+  if (x > 1 && screen[y][x - 1] !== "  ") {
     if (screen[y][x - 1] === screen[y][x - 2]) {
       const candyKey = screen[y][x - 1];
       candies[candyKey].weight = 0;
     }
   }
 
-  if (y >= 2) {
+  //horizontal check
+  if (y > 1 && screen[y - 1][x] !== "  ") {
     if (screen[y - 1][x] === screen[y - 2][x]) {
       const candyKey = screen[y - 1][x];
       candies[candyKey].weight = 0;
@@ -64,6 +68,60 @@ export const calculateWeights = (screen, { x, y }, candies = CANDIES) => {
 export const resetWeights = (candies = CANDIES) => {
   for (const key in candies) {
     candies[key].weight = 1;
+  }
+};
+
+/*
+So, for findAllMatches in the board I plan to :
+ -> iterate through each candy -> for it
+ -> if there is no candies then move to next.
+ If there is candy -> removeBlastedCandies -> gravity -> continue with findAllMatches
+*/
+
+const findAllMatches = (screenConfig) => {
+  const { screen, width, height } = screenConfig;
+  const matches = new Set();
+
+  //for horizontal
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width - 3; x++) {
+      const candy1 = screen[y][x];
+      const candy2 = screen[y][x + 1];
+      const candy3 = screen[y][x + 2];
+
+      if (candy1 !== "  " && candy1 === candy2 && candy2 === candy3) {
+        matches.add(`${x},${y}`);
+        matches.add(`${x + 1},${y}`);
+        matches.add(`${x + 2},${y}`);
+      }
+    }
+  }
+
+  //for vertical
+  for (let x = 0; x < width; x++) {
+    for (let y = 0; y < height - 3; y++) {
+      const candy1 = screen[y][x];
+      const candy2 = screen[y + 1][x];
+      const candy3 = screen[y + 2][x];
+
+      if (candy1 !== "  " && candy1 === candy2 && candy2 === candy3) {
+        matches.add(`${x},${y}`);
+        matches.add(`${x},${y + 1}`);
+        matches.add(`${x},${y + 2}`);
+      }
+    }
+  }
+
+  return [...matches].map((candy) => candy.split(",").map(Number));
+};
+
+export const filterCandies = ({ screenConfig }) => {
+  while (true) {
+    const matches = findAllMatches(screenConfig);
+    if (matches.length === 0) break;
+
+    removeBlastedCandies(matches, screenConfig.screen);
+    gravityPull({ screenConfig }, matches);
   }
 };
 

@@ -51,5 +51,17 @@
 - above candies are pushed down
 - new candies are pushed from the above
 
-# architecture. 
-- 
+
+# Ideas : 
+1. Inside refill logic, add a animation loop that shows basting of the candy and one by one it will come down.
+  - blast ; 
+  - 100 mili seconds of gap and printing of screen with each row copying down.  
+2. chaging of the data structure : rather than storing candy, store numbers. 
+  - define a global variable that will store the detail of the candy. 
+    - it's weight, 
+    - {
+      number : {
+        candyEmoji, 
+        candyWeights
+      }
+    }

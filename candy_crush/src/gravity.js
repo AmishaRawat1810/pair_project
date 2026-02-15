@@ -5,29 +5,30 @@ import {
 } from "./fill_candies.js";
 
 export const gravityPull = ({ screenConfig }, candiesToBlast) => {
-  const { screen, height } = screenConfig;
+  const { screen } = screenConfig;
 
   if (!candiesToBlast || candiesToBlast.length === 0) return;
 
-  const affectedCols = [...new Set(candiesToBlast.map(([_, x]) => x))];
+  const columnsToProcess = [...new Set(candiesToBlast.map(([y, x]) => x))];
 
-  for (const x of affectedCols) {
-    let writerPtr = height - 1;
-
-    for (let y = height - 1; y >= 0; y--) {
-      if (screen[y][x] !== "  ") {
-        screen[writerPtr][x] = screen[y][x];
-        writerPtr--;
+  columnsToProcess.forEach((col) => {
+    let writeRow = screen.length - 1;
+    for (let row = screen.length - 1; row >= 0; row--) {
+      if (screen[row][col] !== "  ") {
+        if (writeRow !== row) {
+          screen[writeRow][col] = screen[row][col];
+          screen[row][col] = "  ";
+        }
+        writeRow--;
       }
     }
 
-    while (writerPtr >= 0) {
-      calculateWeights(screen, { x, y: writerPtr });
-      screen[writerPtr][x] = weightedPick();
-      resetWeights();
-      writerPtr--;
+    while (writeRow >= 0) {
+      const newCandy = weightedPick();
+      screen[writeRow][col] = newCandy;
+      writeRow--;
     }
-  }
+  });
 };
 
 // Bejeweled : bottom-up full-column pass, then fill from the top.

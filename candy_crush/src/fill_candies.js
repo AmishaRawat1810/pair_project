@@ -24,29 +24,6 @@ export const weightedPick = (
   }
 };
 
-// export const filterPairs = (
-//   { screen, height, width },
-//   candies = CANDIES,
-// ) => {
-//   const candyTypes = Object.keys(candies);
-
-//   for (let r = 1; r < height - 1; r++) {
-//     for (let c = 1; c < width - 1; c++) {
-//       const target = screen[r][c];
-
-//       if (target === screen[r - 1][c] && target === screen[r + 1][c]) {
-//         const remainingCandies = candyTypes.filter((candy) => candy !== target);
-//         screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
-//       }
-
-//       if (screen[r][c - 1] === target && target === screen[r][c + 1]) {
-//         const remainingCandies = candyTypes.filter((candy) => candy !== target);
-//         screen[r][c] = weightedPick(remainingCandies, [1, 1, 1]);
-//       }
-//     }
-//   }
-// };
-
 export const calculateWeights = (screen, { x, y }, candies = CANDIES) => {
   // vertical check
   if (x > 1 && screen[y][x - 1] !== "  ") {

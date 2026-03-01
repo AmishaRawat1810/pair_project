@@ -25,12 +25,11 @@ const candyCrush = new TransformStream({
     if (chunk === "q") {
       controller.enqueue(disableMouse + showCursor);
     }
-    const regex = '/[(\d+)(\d+);(\d+) M/g'
+    const regex = "/[(\d+)(\d+);(\d+) M/g";
     const matches = chunk.matchAll(regex);
-    matches.forEach(match => {
+    matches.forEach((match) => {
       
     });
-    if (chunk)
   },
 });
 

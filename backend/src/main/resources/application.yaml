@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: backend
+
+  mongodb:
+      uri: mongodb+srv://amisharawat05_db_user:root@readit-custer.xormx00.mongodb.net/?appName=readit-custer
+
+logging:
+  pattern:
+    console: "%clr(%d{HH:mm:ss}){green}
+    %clr(%-5level) %clr(%msg){white}%n"
+
+  level:
+    org:
+      springframework:
+        web: DEBUG
+
+server:
+  port: 9000

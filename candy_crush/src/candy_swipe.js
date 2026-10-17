@@ -18,7 +18,7 @@ export const swapCandies = (swiped, swiper, screen) => {
   screen[swiper.y][swiper.x] = swiper.value;
 };
 
-export const swipeCandy = ({ swiped, swiper, screen }) => {
+export const swipeCandy = ({ swiped, swiper, screen, deferBlast = false }) => {
   if (!validateLiberty(swiped, swiper)) return { success: false };
 
   swapCandies(swiped, swiper, screen);
@@ -27,6 +27,7 @@ export const swipeCandy = ({ swiped, swiper, screen }) => {
     swiped,
     swiper,
     screen,
+    removeMatches: !deferBlast,
   });
 
   if (swiperBlasts.success || swipedBlasts.success) {

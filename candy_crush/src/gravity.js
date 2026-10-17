@@ -1,6 +1,4 @@
 import {
-  calculateWeights,
-  resetWeights,
   weightedPick,
 } from "./fill_candies.js";
 

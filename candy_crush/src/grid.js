@@ -10,10 +10,22 @@ export const createScreen = ({ height, width, char = " " }) => {
   return { height, width, screen };
 };
 
-export const renderScreen = (screen, selected) => {
+export const renderScreen = (
+  screen,
+  selected,
+  highlighted = [],
+  highlightColor = "green",
+) => {
   return screen.map((row, y) =>
     row.map((ele, x) => {
       const candy = CANDIES[ele]?.candy ?? (ele === "  " ? "  " : " ");
+      const highlight = highlighted.some(([row, column]) =>
+        row === y && column === x
+      );
+      if (highlight) {
+        const color = highlightColor === "red" ? 41 : 42;
+        return `\x1b[30;${color}m${candy}\x1b[0m`;
+      }
       return selected?.x === x && selected?.y === y
         ? `\x1b[30;43m${candy}\x1b[0m`
         : candy;
@@ -45,12 +57,20 @@ export const getCellAtPosition = (x, y, screenConfig) => {
   };
 };
 
-export const drawOnScreen = ({ screenConfig, selected, message = "" }) => {
+export const drawOnScreen = ({
+  screenConfig,
+  selected,
+  highlighted,
+  highlightColor,
+  message = "",
+}) => {
   console.clear();
   console.log("Candy Crush");
   console.log(
     "Click a candy, then an adjacent candy to swap. Press q to quit.",
   );
   console.log(message || " ");
-  console.log(renderScreen(screenConfig.screen, selected));
+  console.log(
+    renderScreen(screenConfig.screen, selected, highlighted, highlightColor),
+  );
 };

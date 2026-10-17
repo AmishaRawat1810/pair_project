@@ -60,7 +60,9 @@ export const removeBlastedCandies = (candiesToBlast, screen) => {
   });
 };
 
-export const blastCandy = ({ swiped, swiper, screen }) => {
+export const blastCandy = (
+  { swiped, swiper, screen, removeMatches = true },
+) => {
   const [swipedMatches, swiperMatches] = [swiped, swiper].map((c) =>
     getMatchedCandies(c, screen)
   );
@@ -77,7 +79,7 @@ export const blastCandy = ({ swiped, swiper, screen }) => {
     allMatches: [...swipedMatches, ...swiperMatches],
   };
 
-  if (result.allMatches.length > 0) {
+  if (removeMatches && result.allMatches.length > 0) {
     removeBlastedCandies(result.allMatches, screen);
   }
 

@@ -1,7 +1,7 @@
 import { play } from "./src/candy_crush.js";
 
-export const main = () => {
-  play();
+export const main = async () => {
+  await play();
 };
 
-main();
+await main();

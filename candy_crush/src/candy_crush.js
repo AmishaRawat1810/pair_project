@@ -1,6 +1,6 @@
 import { swipeCandy, validateLiberty } from "./candy_swipe.js";
 import { removeBlastedCandies } from "./candy_blast.js";
-import { gravityPull } from "./gravity.js";
+import { gravityPullAnimated } from "./gravity.js";
 import { fillCandies, filterCandies } from "./fill_candies.js";
 import { createScreen, drawOnScreen, getCellAtPosition } from "./grid.js";
 import { startTerminal } from "./terminal.js";
@@ -96,14 +96,18 @@ export const play = async () => {
     state.highlighted = result.candiesToBlast;
     state.highlightColor = "green";
     render();
-    await wait(300);
+    await wait(500);
 
     removeBlastedCandies(result.candiesToBlast, screenConfig.screen);
     state.highlighted = [];
     render();
-    await wait(200);
+    await wait(700);
 
-    gravityPull({ screenConfig }, result.candiesToBlast);
+    await gravityPullAnimated(
+      { screenConfig },
+      result.candiesToBlast,
+      render,
+    );
     filterCandies({ screenConfig });
     render();
   };
